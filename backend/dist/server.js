@@ -22,8 +22,10 @@ app.post('api/v1/brain/:sharelink', (req, res) => {
 (0, db_1.default)();
 const user_route_1 = __importDefault(require("./routes/user.route"));
 const content_route_1 = __importDefault(require("./routes/content.route"));
+const link_route_1 = __importDefault(require("./routes/link.route"));
 app.use('/api/v1', user_route_1.default);
 app.use('/api/v1', content_route_1.default);
+app.use('/api/v1', link_route_1.default);
 app.listen(3000, () => {
     console.log('app is listening');
 });

@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import { ContentModel } from "../models/content.model";
 import { TagModel } from "../models/tags.model";
+import { random } from "../utils/hash";
 
 
 export const CreateContent = async (req:Request,res:Response)=> {
@@ -161,7 +162,7 @@ export const deleteContent = async (req:Request,res:Response)=>{
 
 export const getContent = async(req:Request,res:Response)=>{
     try{
-        const userdetail = req.userdetail;
+    const userdetail = req.userdetail;
     const userId = userdetail._id
 
     if(!userId){
@@ -173,7 +174,7 @@ export const getContent = async(req:Request,res:Response)=>{
 
     const Contentdata = await ContentModel.find({
         user:userId
-    })
+    }).populate("user","username")
     
     return res.status(200).json({
         message:"Retrived Successfully",

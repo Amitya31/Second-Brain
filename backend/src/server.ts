@@ -30,8 +30,10 @@ connectDB()
 
 import UserRouter from './routes/user.route'
 import ContentRouter from './routes/content.route'
+import LinkRouter from './routes/link.route'
 app.use('/api/v1',UserRouter)
 app.use('/api/v1', ContentRouter)
+app.use('/api/v1', LinkRouter)
 app.listen(3000,()=>{
     console.log('app is listening')
 });
