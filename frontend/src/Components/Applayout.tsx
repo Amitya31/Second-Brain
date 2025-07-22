@@ -1,32 +1,31 @@
-import { type ReactNode } from "react";
-import Navbar from "./Navbar";
+
+import { useState, type ReactNode } from "react";
 import Sidebar from "./Sidebar";
-type applayoutProps = {
-  children:ReactNode
+import Button from "./ui/Button";
+import Navbar from "./Navbar";
+interface SidebarProps {
+  children: ReactNode
 }
 
-function Applayout({children}:applayoutProps) {
+function Applayout({children}:SidebarProps) {
+  const [sidebarOpen,setSidebarOpen] = useState<boolean>(true)
+
+  // const openSidebar =()=> {
+  //   setSidebarOpen(true)
+  // }
+
+  // const closeSidebar = ()=>{
+  //    setSidebarOpen(false)
+  // }
 
   return (
-    <div>
-    <div className="flex flex-col h-full m-0 p-0 ">
-      <div className="">
-        <div className="w-510 fixed">
-        <Navbar />
-      </div>
-      <div className="flex mt-20">
-        <div className="fixed w-full ">
-          <Sidebar />
-        </div>
-        <div className="ml-72 w-full z-10 ">
-            {children}
-      </div>
-      </div>
-      </div>
+    <div className=" flex w-screen  ">
+    <Sidebar />
+    <div className="w-full h-screen flex flex-col ">
+    <Navbar />
+    {children}
     </div>
-      
-      {/* Main content on the right */}
-    </div>
+    </div>   
   )
 }
 

@@ -7,7 +7,7 @@ const Card = ({children}:Cardprops) => {
  
     return (
         <div>
-            <div className="bg-white w-90 max-h-fit border-white rounded-2xl p-2 shadow-lg shadow-black">
+            <div className=" max-h-fit rounded-2xl p-2 ">
                 {children}
             </div>
         </div>
@@ -16,7 +16,7 @@ const Card = ({children}:Cardprops) => {
 
 const CardHeader = ({children}:Cardprops)=>{
     return (
-        <div className="flex justify-between p-2 gap-x-3">
+        <div className="flex justify-between items-center p-2 gap-x-3">
             {children}
         </div>
     )

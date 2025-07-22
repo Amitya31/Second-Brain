@@ -4,7 +4,14 @@ import connectDB from './config/db'
 import cors from 'cors'
 
 app.use(express.json())
-app.use(cors())
+
+const origin = "http://localhost:5173"; // your frontend's URL
+
+app.use(cors({
+    origin,                
+    credentials: true,     
+  })
+);
 
 app.post('api/v1/auth/signin',(req,res)=>{
 })

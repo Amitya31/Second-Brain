@@ -25,7 +25,7 @@ function Button({
     }
   return (
     <button
-      className={`${variants[variant]} ${className ?? ""} flex items-center gap-2 px-4 py-2 rounded-lg transition ` } 
+      className={`${variants[variant]} ${className ?? ""} flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition ` } 
       {...rest}
     >
       {startIcon && <span>{startIcon}</span>}

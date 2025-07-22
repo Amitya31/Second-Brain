@@ -8,7 +8,11 @@ const app = (0, express_1.default)();
 const db_1 = __importDefault(require("./config/db"));
 const cors_1 = __importDefault(require("cors"));
 app.use(express_1.default.json());
-app.use((0, cors_1.default)());
+const origin = "http://localhost:5173"; // your frontend's URL
+app.use((0, cors_1.default)({
+    origin,
+    credentials: true,
+}));
 app.post('api/v1/auth/signin', (req, res) => {
 });
 app.post('api/v1/auth/signin', (req, res) => {

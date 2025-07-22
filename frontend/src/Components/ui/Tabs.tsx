@@ -1,15 +1,12 @@
 import * as TabsPrimitive from '@radix-ui/react-tabs'
-import type { ReactNode } from 'react'
 
-interface TabsProps {
-    children: ReactNode;
-}
+type Tabsprops = React.ComponentProps<typeof TabsPrimitive.Root>
 
-function Tabs({children}:TabsProps) {
+function Tabs({children,className,...props}:Tabsprops) {
   return (
-    <div>
-      {children}
-    </div>
+    <TabsPrimitive.Root {...props} className={className}>
+        {children}
+    </TabsPrimitive.Root>
   )
 }
 

@@ -1,21 +1,27 @@
 
-import { BrowserRouter, Route,Routes } from "react-router-dom"
+import {  Route,Routes } from "react-router-dom"
 import Home from "./Pages/Home"
 import Auth from "./Components/Auth"
+import { ProtectedRoute } from "./Components/ProtectedRoute"
+import ModalProvider from "./Context/ModalContext"
 
 function App() {
 
   return (
-    <>
-      <div>
-        <BrowserRouter>
-         <Routes>
-           <Route path={'/'} element={<Home/>} />
-           <Route path={'/auth'} element={<Auth />}/>
-         </Routes>
-        </BrowserRouter>
-      </div>
-    </>
+    <Routes>
+      <Route path={'/auth'} element={<Auth />}/>
+
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <ModalProvider>
+              <Home />
+            </ModalProvider>
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
   )
 }
 

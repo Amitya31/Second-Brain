@@ -1,56 +1,107 @@
-import { HamburgerMenuIcon, VideoIcon } from "@radix-ui/react-icons";
-import {   FilesIcon, LogOutIcon, MicIcon } from "lucide-react";
-import type { ReactNode } from "react";
+import { VideoIcon } from "@radix-ui/react-icons";
+import {   FilesIcon, LogOutIcon, MicIcon, PanelLeftIcon } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import Button from "./ui/Button";
+import { cn } from "../lib/utils";
+import useIsmobile from "../Hooks/use-mobile";
 
 
-function Sidebar() {
-    interface sidebaritemsProp  {
-        title:string,
-        icon: ReactNode,
-        type:string,
-    }
 
-    const SidebarItems: Array<sidebaritemsProp> = [
-        {
-            title:"Video",
-            icon: <VideoIcon className="size-8 pt-1" />,
-            type: "video",
-        },
-        {
-            title:"Audio",
-            icon: <MicIcon className="size-7 pt-1"/>,
-            type: "video",
-        },
-        {
-            title:"Document",
-            icon: <FilesIcon className="size-7 pt-1"/>,
-            type:'document',
-        }
-    ]
-
-    
-  return (
-    <div className="bg-black w-1/7 text-white ">
-     <div className="flex ">
-            <button className="mt-6 ml-7 border-black hover:border-2 p-2" >
-                <HamburgerMenuIcon className="size-5"/>
-            </button>
-     </div>
-     <div className="mt-5"> 
-        {SidebarItems.map((items)=>(
-            <div className="w-full" key={items.type}>
-                <div className="text-3xl w-full flex p-6 gap-x-2 items-center text-gray-400 cursor-pointer hover:bg-gray-200 transition-opacity duration-300">
-                  <span>{items.icon}</span><span>{items.title}</span>
-                </div>
-            </div>
-        ))}
-     </div>
-     <div className="mt-124">
-        <Button startIcon={<LogOutIcon/>} variant="danger" className="h-7 w-full text-2xl text-black">Logout</Button>
-     </div>
-    </div>
-  )
+interface sidebaritemsProp  {
+    title:string,
+    icon: ReactNode,
+    type:string,
 }
 
-export default Sidebar
+const SidebarItems: Array<sidebaritemsProp> = [
+    {
+        title:"Video",
+        icon: <VideoIcon className="size-8 pt-1" />,
+        type: "video",
+    },
+    {
+        title:"Audio",
+        icon: <MicIcon className="size-7 pt-1"/>,
+        type: "video",
+    },
+    {
+        title:"Document",
+        icon: <FilesIcon className="size-7 pt-1"/>,
+        type:'document',
+    }
+]
+
+export default function Sidebar() {
+  const isMobile = useIsmobile();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    const storedState = localStorage.getItem("sidebar-open");
+    if (storedState !== null) {
+      setIsOpen(storedState === "true");
+    } else {
+      setIsOpen(!isMobile);
+    }
+  }, [isMobile]);
+
+  useEffect(() => {
+    localStorage.setItem("sidebar-open", String(isOpen));
+  }, [isOpen]);
+
+  const toggleSidebar = useCallback(() => setIsOpen((prev) => !prev), []);
+
+  const sidebarClass = useMemo(
+    () =>
+      cn(
+        "fixed z-40 top-0 left-0 h-screen bg-black text-white transition-all duration-300 ease-in-out lg:relative lg:z-0",
+        isMobile
+          ? isOpen
+            ? "w-64 shadow-xl"
+            : "w-0 overflow-hidden"
+          : isOpen
+          ? "w-64"
+          : "w-15"
+      ),
+    [isMobile, isOpen]
+  );
+
+  return (
+    <>
+      
+
+      <div className={sidebarClass}>
+        <button
+        onClick={toggleSidebar}
+        className="fixed left-0 top-0 lg:left-4 z-50 lg:static lg:ml-2 p-2 bg-black text-white rounded hover:bg-gray-700"
+      >
+        <PanelLeftIcon className="size-6" />
+      </button>
+        <div className="p-6">
+          {SidebarItems.map((item) => (
+            <button
+              key={item.type}
+              className={cn("flex items-center gap-3 py-2 px-4 w-full text-left rounded",isMobile ? 
+                isOpen 
+                 ? 'hover:bg-gray-400'
+                 : 'hover:none' 
+                : isOpen 
+                 ? 'hover:bg-gray-400' 
+                 : 'hover:none'
+                )}
+            >
+              {item.icon}
+              {isOpen && <span className="text-lg">{item.title}</span>}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {isMobile && isOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black bg-opacity-50"
+          onClick={toggleSidebar}
+        />
+      )}
+    </>
+  );
+}

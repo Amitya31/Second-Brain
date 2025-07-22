@@ -21,23 +21,23 @@ function ContentCard() {
     }
   }, [tweet]);
   return (
-    <div className="p-3 m-4">
-      <Card>
+    <div className="p-3 m-4 w-85 ">
+    <Card>
     <CardHeader>
-        <div className="text-gray-400 " >
+        <div className="text-white " >
           {isTweet && <TwitterLogoIcon />}
         </div>
-        <div className="font-semibold font-">
+        <div className="font-semibold">
           content.title  
         </div>
-        <div className="flex text-gray-400 gap-x-3">
+        <div className="flex text-white gap-x-3">
           <Share1Icon />
           <TrashIcon />
         </div>
     </CardHeader>
     <CardContent>
-      <div className="max-h-fit">
-        <blockquote className="twitter-tweet border-transparent" >
+      <div className="h-max-fit w-max-fit">
+        <blockquote className="twitter-tweet border-transparent h-5 " >
           <a href="https://twitter.com/pratyush__dev/status/1935628528961159299"></a>
         </blockquote> 
       </div>
