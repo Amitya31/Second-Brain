@@ -3,10 +3,22 @@ import { Share1Icon, TrashIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/Card";
 import { useEffect, useState } from "react";
 
-function ContentCard() {
-  const [isTweet,setIsTweet] = useState<boolean>(false)
+interface UserType {
+  username:string,
+  _id?:string
+}
+interface ContentType {
+  _id:string,
+  tags:string[],
+  title:string,
+  type:string,
+  url:string,
+  user:UserType,
+  __v?: number
+}
 
-  const tweet:string = "https://twitter.com/pratyush__dev/status/1935628528961159299"
+function ContentCard({content}:ContentType) {
+  const [isTweet,setIsTweet] = useState<boolean>(false)
 
   const tags :Array<string> = [
     '#productivity',
@@ -14,12 +26,14 @@ function ContentCard() {
     '#work',
     'needs'
   ]
+  
 
   useEffect(() => {
-    if (tweet.includes("twitter.com")) {
+
+    if (content.url.includes("twitter.com")) {
       setIsTweet(true);
     }
-  }, [tweet]);
+  }, [content]);
   return (
     <div className="p-3 m-4 w-85 ">
     <Card>
@@ -28,7 +42,7 @@ function ContentCard() {
           {isTweet && <TwitterLogoIcon />}
         </div>
         <div className="font-semibold">
-          content.title  
+          {content.title}  
         </div>
         <div className="flex text-white gap-x-3">
           <Share1Icon />
@@ -38,13 +52,15 @@ function ContentCard() {
     <CardContent>
       <div className="h-max-fit w-max-fit">
         <blockquote className="twitter-tweet border-transparent h-5 " >
-          <a href="https://twitter.com/pratyush__dev/status/1935628528961159299"></a>
+          <a href={content}></a>
         </blockquote> 
       </div>
     </CardContent>
     <CardFooter>
       <div className="grid grid-cols-3 gap-2">
-        {tags.map((tag=>{if(tag.includes('#')){
+        {
+        
+        content.tags.map((tag=>{if(tag.title.includes('#')){
           return <div className="bg-cyan-100 text-cyan-300 rounded-2xl cursor-pointer bg-center flex justify-around">{tag}</div>
         }
           return <div className="bg-cyan-100 text-cyan-300 rounded-2xl cursor-pointer bg-center flex justify-around">#{tag}</div>

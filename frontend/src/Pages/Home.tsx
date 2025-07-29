@@ -2,22 +2,29 @@ import axios from "axios";
 import Applayout from "../Components/Applayout";
 import ContentCard from '../Components/ContentCard'
 import { useEffect, useState } from "react";
-import { useModal } from "../Hooks/useModal";
 
 
-interface Content {
-  id:string,
-  url:string,
-  user:string,
-  type:string,
+interface UserType {
+  username:string,
+  _id?:string
+}
+interface ContentType {
+  _id:string,
+  tags:string[],
   title:string,
-  tags:string,
+  type:string,
+  url:string,
+  user:UserType,
+  __v?: number
+  
+  
+  
 }
 
 const Home = () => {
-    const [contents,setContents] = useState<Content[]>([])
-    const {isOpen} = useModal()
+    const [contents,setContents] = useState<ContentType[]>([])
     const fetchContents = async () => {
+    
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(`http://localhost:3000/api/v1/content`, {
@@ -25,8 +32,8 @@ const Home = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      setContents(response.data);
-      console.log(contents)
+      const fetchedData: ContentType[] = response.data.data;
+      setContents(fetchedData);
       
     } catch (err) {
       console.error("Error fetching contents:", err);
@@ -37,18 +44,21 @@ const Home = () => {
     fetchContents();
   },[]);
 
+
+  
+    console.log(contents)
+
     // const content = fetchContent
     return ( 
         <>
         <Applayout>
           <div className="  grid grid-cols-1 lg:grid-cols-3 justify-center lg:justify-around  gap-x-2 w-full h-screen bg-gray-400 overflow-auto">
-              <ContentCard />
+              {contents.map(content=>(
+                <ContentCard key={content._id} content={content} />
+              ))}
+              
           </div>
         </Applayout>
-          
-          
-          
-          
         </>
      );
 }

@@ -1,11 +1,12 @@
 import express from 'express'
 const app = express()
 import connectDB from './config/db'
+const cookieParser = require('cookie-parser')
 import cors from 'cors'
 
 app.use(express.json())
 
-const origin = "http://localhost:5173"; // your frontend's URL
+const origin = "*"; // your frontend's URL
 
 app.use(cors({
     origin,                
@@ -13,27 +14,9 @@ app.use(cors({
   })
 );
 
-app.post('api/v1/auth/signin',(req,res)=>{
-})
-
-app.post('api/v1/auth/signin',(req,res)=>{
-})
-
-app.get('api/v1/content',(req,res)=>{
-
-})
-
-app.post('api/v1/brain/share',(req,res)=>{
-
-})
-app.post('api/v1/brain/:sharelink',(req,res)=>{
-
-})
-
+app.use(cookieParser())
 
 connectDB()
-
-
 
 import UserRouter from './routes/user.route'
 import ContentRouter from './routes/content.route'
