@@ -41,38 +41,56 @@ const Navbar = () => {
   }
 };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Submitted:", formData);
-    
-    // Handle submission logic here (API call, validation, etc.)
-    uploadData();
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  console.log("Submitted:", formData);
+  
+  // Handle submission logic here (API call, validation, etc.)
+  uploadData();
 
-    setModalOpen(prev=>!prev)
-  };
+  setModalOpen(prev=>!prev)
+};
 
-  const uploadData = async ()=>{
-    try{
-      const token =localStorage.getItem('token')
-      const response = await axios.post('http://localhost:3000/api/v1/content',formData,
-         {
-          headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
+const uploadData = async ()=>{
+  try{
+    const token =localStorage.getItem('token')
+    const response = await axios.post('http://localhost:3000/api/v1/content',formData,
+        {
+        headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      }
         }
-         }
-      );
-      const data = response.data;
-      console.log(data)
-    }catch(e){
-      if(e instanceof Error)
-      console.log(e.message)
-    }
+    );
+    const data = response.data;
+    console.log(data)
+  }catch(e){
+    if(e instanceof Error)
+    console.log(e.message)
   }
+}
+
+const handleShare = ()=>{
+  
+}
 
   return (
     <div className="lg:px-0 flex justify-end bg-gray-400 p-4 gap-x-4">
-      <Button className="text-xl" variant="secondary">Share Content</Button>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button className="text-xl" variant="secondary" onClick={handleShare}>Share Content</Button>
+        </DialogTrigger>
+
+        <DialogContent className="bg-black text-white">
+          <DialogHeader>
+            <DialogTitle >Share your brain</DialogTitle>
+            <DialogDescription>
+              Click on Share to share your contents
+            </DialogDescription>
+          </DialogHeader>
+
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogTrigger asChild>

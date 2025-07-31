@@ -8,17 +8,19 @@ interface UserType {
   username:string,
   _id?:string
 }
+
+interface TagsType {
+  _id:string,
+  title:string,
+}
 interface ContentType {
   _id:string,
-  tags:string[],
+  tags:TagsType[],
   title:string,
   type:string,
   url:string,
   user:UserType,
   __v?: number
-  
-  
-  
 }
 
 const Home = () => {

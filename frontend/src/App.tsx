@@ -5,6 +5,7 @@ import Auth from "./Components/Auth"
 import { ProtectedRoute } from "./Components/ProtectedRoute"
 import ModalProvider from "./Context/ModalContext"
 
+
 function App() {
 
   return (
