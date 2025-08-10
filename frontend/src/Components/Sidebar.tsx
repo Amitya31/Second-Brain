@@ -1,9 +1,10 @@
-import { VideoIcon } from "@radix-ui/react-icons";
+import { TwitterLogoIcon, VideoIcon } from "@radix-ui/react-icons";
 import {   FilesIcon, LogOutIcon, MicIcon, PanelLeftIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import Button from "./ui/Button";
 import { cn } from "../lib/utils";
 import useIsmobile from "../Hooks/use-mobile";
+import useContentType from "../Hooks/ContentTypeHook";
 
 
 
@@ -15,25 +16,31 @@ interface sidebaritemsProp  {
 
 const SidebarItems: Array<sidebaritemsProp> = [
     {
-        title:"Video",
-        icon: <VideoIcon className="size-8 pt-1" />,
-        type: "video",
+      title:"Video",
+      icon: <VideoIcon className="size-8 pt-1" />,
+      type: "video",
     },
     {
-        title:"Audio",
-        icon: <MicIcon className="size-7 pt-1"/>,
-        type: "video",
+      title:"Audio",
+      icon: <MicIcon className="size-7 pt-1"/>,
+      type: "audio",
     },
     {
-        title:"Document",
-        icon: <FilesIcon className="size-7 pt-1"/>,
-        type:'document',
+      title:"Document",
+      icon: <FilesIcon className="size-7 pt-1"/>,
+      type:'document',
+    },
+    {
+      title:"Tweet",
+      icon: <TwitterLogoIcon className="size-7 pt-1"/>,
+      type:'tweet',
     }
 ]
 
 export default function Sidebar() {
   const isMobile = useIsmobile();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const {selectedType,setType} = useContentType()
 
   useEffect(() => {
     const storedState = localStorage.getItem("sidebar-open");
@@ -88,6 +95,7 @@ export default function Sidebar() {
                  ? 'hover:bg-gray-400' 
                  : 'hover:none'
                 )}
+              onClick={()=>setType(item.type)}
             >
               {item.icon}
               {isOpen && <span className="text-lg">{item.title}</span>}

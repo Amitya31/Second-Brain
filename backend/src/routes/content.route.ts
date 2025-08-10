@@ -1,5 +1,5 @@
 import { Router } from "express"; 
-import { CreateContent,getContent } from "../Controllers/content.controller";
+import { CreateContent,deleteContent,getContent } from "../Controllers/content.controller";
 import VerifyJwt from "../middleware/auth.middleware";
 
 const router = Router();
@@ -7,5 +7,6 @@ const router = Router();
 router.post('/content',VerifyJwt,CreateContent)
 //@ts-ignore
 router.get('/content',VerifyJwt , getContent)
-
+//@ts-ignore
+router.post('/content/:id',VerifyJwt,deleteContent)
 export default router

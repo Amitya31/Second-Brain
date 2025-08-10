@@ -1,7 +1,7 @@
 import mongoose, { mongo } from 'mongoose'
 import {Schema} from 'mongoose'
 
-const contentTypes = ['image','audio','video','document']
+const contentTypes = ['image','audio','video','document','tweet']
 
 const ContentSchema = new Schema({
     url:{

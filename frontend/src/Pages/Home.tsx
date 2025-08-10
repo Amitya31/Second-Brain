@@ -2,6 +2,7 @@ import axios from "axios";
 import Applayout from "../Components/Applayout";
 import ContentCard from '../Components/ContentCard'
 import { useEffect, useState } from "react";
+import useContentType from "../Hooks/ContentTypeHook";
 
 
 interface UserType {
@@ -25,6 +26,8 @@ interface ContentType {
 
 const Home = () => {
     const [contents,setContents] = useState<ContentType[]>([])
+    const [filteredContent,setFilteredContent]=useState<ContentType[]>([])
+    const {selectedType} = useContentType()
     const fetchContents = async () => {
     
     try {
@@ -36,6 +39,7 @@ const Home = () => {
       });
       const fetchedData: ContentType[] = response.data.data;
       setContents(fetchedData);
+
       
     } catch (err) {
       console.error("Error fetching contents:", err);
@@ -47,20 +51,39 @@ const Home = () => {
   },[]);
 
 
+  useEffect(() => {
+  if (selectedType){
+
+  console.log("Filtering for:", selectedType);
+  const filter = contents.filter(
+    (content) => content.type.toLowerCase() === selectedType.toLowerCase()
+  );
+  console.log("Filtered result:", filter);
+  setFilteredContent(filter)
+  }else{
+    
+  setFilteredContent(contents);
+  }
+
   
-    console.log(contents)
+}, [contents, selectedType]);
+
+useEffect(() => {
+  console.log("filteredContent updated:", filteredContent);
+}, [filteredContent]);
+
 
     // const content = fetchContent
     return ( 
         <>
-        <Applayout>
+      
           <div className="  grid grid-cols-1 lg:grid-cols-3 justify-center lg:justify-around  gap-x-2 w-full h-screen bg-gray-400 overflow-auto">
-              {contents.map(content=>(
+              {filteredContent.map(content=>(
                 <ContentCard key={content._id} content={content} />
               ))}
               
           </div>
-        </Applayout>
+        
         </>
      );
 }

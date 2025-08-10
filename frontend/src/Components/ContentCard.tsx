@@ -1,6 +1,7 @@
 import { Share1Icon, TrashIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/Card";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import axios from "axios";
 
 interface UserType {
   username: string;
@@ -33,8 +34,26 @@ function getEmbedUrl(url: string, type: string): string {
 function ContentCard({ content }: ContentType) {
   const [isTweet, setIsTweet] = useState<boolean>(false);
 
+  async function handleDelete(id:string){
+    const contentId = id;
+    try{
+      const token = localStorage.getItem('token')
+      await axios.post(`http://localhost:3000/api/v1/content/${contentId}`,
+        {
+          header:{
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      )
+      console.log(id)
+    }catch(err){
+      console.log('Error in deleting Content',err)
+      console.log(id)
+    }
+  }
+
   useEffect(() => {
-    if (content.url.includes("twitter.com")) {
+    if (content.url.includes("twitter.com")|| content.type==='tweet') {
       setIsTweet(true);
 
       // Load Twitter script
@@ -46,7 +65,7 @@ function ContentCard({ content }: ContentType) {
     } else {
       setIsTweet(false);
     }
-  }, [content.url]);
+  }, [content.url,content.type]);
 
   return (
     <div className="p-3 m-4 w-85">
@@ -58,9 +77,11 @@ function ContentCard({ content }: ContentType) {
           <div className="font-semibold">
             {content.title}
           </div>
-          <div className="flex text-white gap-x-3">
+          <div className=" flex text-white gap-x-3">
             <Share1Icon />
-            <TrashIcon />
+            <button className="cursor-pointer" onClick={()=>handleDelete(content._id)}>
+              <TrashIcon />
+            </button>
           </div>
         </CardHeader>
 

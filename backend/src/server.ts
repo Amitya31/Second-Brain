@@ -6,7 +6,7 @@ import cors from 'cors'
 
 app.use(express.json())
 
-const origin = "*"; // your frontend's URL
+const origin = "http://localhost:5173"; // your frontend's URL
 
 app.use(cors({
     origin,                

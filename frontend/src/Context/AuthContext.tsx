@@ -1,7 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react"
 import AuthContext from "../Hooks/AuthHook"
 import type { AuthContextType } from "../types/AuthTypes";
-import {useNavigate} from 'react-router-dom'
 
 interface AuthProps { 
     children:ReactNode

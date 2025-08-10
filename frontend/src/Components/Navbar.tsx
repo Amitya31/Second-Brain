@@ -70,15 +70,15 @@ const uploadData = async ()=>{
   }
 }
 
-const handleShare = ()=>{
-  
-}
+// const handleShare = ()=>{
+
+// }
 
   return (
     <div className="lg:px-0 flex justify-end bg-gray-400 p-4 gap-x-4">
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="text-xl" variant="secondary" onClick={handleShare}>Share Content</Button>
+          <Button className="text-xl" variant="secondary" >Share Content</Button>
         </DialogTrigger>
 
         <DialogContent className="bg-black text-white">
@@ -154,7 +154,7 @@ const handleShare = ()=>{
             </div>
 
             <DialogFooter className="pt-4">
-                <Button className="text-xl" type="button" variant="secondary" onClick={() => setModalOpen(false)}>
+                <Button className="text-xl" type="button" variant="danger" onClick={() => setModalOpen(false)}>
                   Cancel
                 </Button>
 
