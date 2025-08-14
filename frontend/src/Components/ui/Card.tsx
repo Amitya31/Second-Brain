@@ -7,7 +7,7 @@ const Card = ({children}:Cardprops) => {
  
     return (
         <div>
-            <div className=" max-h-fit rounded-2xl p-2 ">
+            <div className=" max-h-fit rounded-2xl p-2 bg-teal-800 ">
                 {children}
             </div>
         </div>

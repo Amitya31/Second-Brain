@@ -1,7 +1,6 @@
 import { TwitterLogoIcon, VideoIcon } from "@radix-ui/react-icons";
-import {   FilesIcon, LogOutIcon, MicIcon, PanelLeftIcon } from "lucide-react";
+import {   FilesIcon, MicIcon, PanelLeftIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
-import Button from "./ui/Button";
 import { cn } from "../lib/utils";
 import useIsmobile from "../Hooks/use-mobile";
 import useContentType from "../Hooks/ContentTypeHook";

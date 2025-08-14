@@ -37,7 +37,7 @@ function ContentCard({ content }: ContentType) {
   async function handleDelete(id:string){
     const contentId = id;
     try{
-      const token = localStorage.getItem('token')
+      const token =localStorage.getItem('token')
       await axios.post(`http://localhost:3000/api/v1/content/${contentId}`,
         {
           header:{

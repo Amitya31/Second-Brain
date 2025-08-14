@@ -77,7 +77,7 @@ useEffect(() => {
     return ( 
         <>
       
-          <div className="  grid grid-cols-1 lg:grid-cols-3 justify-center lg:justify-around  gap-x-2 w-full h-screen bg-gray-400 overflow-auto">
+          <div className="  grid grid-cols-1 lg:grid-cols-3 justify-center lg:justify-around  gap-x-2 w-full h-screen bg-black overflow-auto">
               {filteredContent.map(content=>(
                 <ContentCard key={content._id} content={content} />
               ))}

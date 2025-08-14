@@ -13,6 +13,8 @@ import {
 } from "./ui/Dialog"; // update this path if needed
 import  Button  from "./ui/Button";
 import axios from "axios";
+import { CopyIcon } from "@radix-ui/react-icons";
+import { CopyCheckIcon } from "lucide-react";
 
 type FormData = {
   url: string;
@@ -23,23 +25,27 @@ type FormData = {
 
 const Navbar = () => {
   const [modalOpen,setModalOpen] = useState<boolean>(false)
+  const [link,setLink] = useState<string>('')
+  const [shareable,setShareable] = useState<boolean>()
+  const [share,setShare]=useState<boolean>(true)
   const [formData, setFormData] = useState<FormData>({
     url: "",
     title: "",
     contentType: "",
     tags: []
   });
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const { name, value } = e.target;
+    const { name, value } = e.target;
 
-  if (name === "tags") {
-    const tagsArray = value.split(/[ ,]+/).filter(Boolean); // split on space or comma
-    setFormData((prev) => ({ ...prev, tags: tagsArray }));
-  } else {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  }
-};
+    if (name === "tags") {
+      const tagsArray = value.split(/[ ,]+/).filter(Boolean); // split on space or comma
+      setFormData((prev) => ({ ...prev, tags: tagsArray }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
 
 const handleSubmit = (e: React.FormEvent) => {
   e.preventDefault();
@@ -50,6 +56,33 @@ const handleSubmit = (e: React.FormEvent) => {
 
   setModalOpen(prev=>!prev)
 };
+
+const handleCopy = ()=>{
+  console.log('copied')
+
+}
+
+const handleShare = async ()=>{
+  setShareable(true)
+  if(shareable){
+    setShare(true)
+  }else{
+    setShare(false)
+  }
+  try {
+    const token = localStorage.getItem('token')
+    const response = await axios.post('http://localhost:3000/api/v1/share',{share},
+      {
+        headers:{
+          Authorization:`Bearer ${token}`
+        }
+      }
+    )
+    console.log(response)
+  } catch (err){
+    console.log('Error in sharing content',err)
+  }
+} 
 
 const uploadData = async ()=>{
   try{
@@ -70,21 +103,27 @@ const uploadData = async ()=>{
   }
 }
 
-// const handleShare = ()=>{
-
-// }
-
   return (
     <div className="lg:px-0 flex justify-end bg-gray-400 p-4 gap-x-4">
+      {shareable && <Button className="text-xl" variant="secondary" onClick={()=>setShareable(false)}>Stop Sharing</Button>}
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="text-xl" variant="secondary" >Share Content</Button>
+          <Button className="text-xl" variant="secondary" onClick={handleShare}>Share Content</Button>
         </DialogTrigger>
 
         <DialogContent className="bg-black text-white">
           <DialogHeader>
             <DialogTitle >Share your brain</DialogTitle>
+            <div className="flex"></div>
+            <div className="bg-zinc-600 text-xl text-gray-300 p-1 rounded-sm">
+              sdgahdajdajdadad
+            </div>
+            <button onClick={handleCopy}>
+              <CopyIcon/>
+              <CopyCheckIcon/>
+            </button>
             <DialogDescription>
+              
               Click on Share to share your contents
             </DialogDescription>
           </DialogHeader>
