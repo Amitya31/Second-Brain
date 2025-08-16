@@ -9,13 +9,11 @@ export const ShareLink = async (req:Request,res:Response)=>{
     const userdetail = req.userdetail;
     const userId = userdetail._id
 
-    const share = req.body.share
+    const share:boolean = req.body.share
 
     const exisitingUser = await LinkModel.findOne({
         UserId:userId
     })
-
-    
 
     let Share;
     const hash = random(10)

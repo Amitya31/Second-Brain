@@ -1,9 +1,10 @@
 import { TwitterLogoIcon, VideoIcon } from "@radix-ui/react-icons";
-import {   FilesIcon, MicIcon, PanelLeftIcon } from "lucide-react";
+import {   FilesIcon, LogOutIcon, MicIcon, PanelLeftIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { cn } from "../lib/utils";
 import useIsmobile from "../Hooks/use-mobile";
 import useContentType from "../Hooks/ContentTypeHook";
+import Button from "./ui/Button";
 
 
 
@@ -65,7 +66,7 @@ export default function Sidebar() {
             ? "w-64 shadow-xl"
             : "w-0 overflow-hidden"
           : isOpen
-          ? "w-64"
+          ? "w-90"
           : "w-15"
       ),
     [isMobile, isOpen]
@@ -84,9 +85,10 @@ export default function Sidebar() {
       </button>
         <div className="p-6">
           {SidebarItems.map((item) => (
-            <button
+            isOpen && <button
               key={item.type}
-              className={cn("flex items-center gap-3 py-2 px-4 w-full text-left rounded",isMobile ? 
+              className={cn("flex items-center gap-3 py-2 px-4 w-full text-center rounded",
+                isMobile ? 
                 isOpen 
                  ? 'hover:bg-gray-400'
                  : 'hover:none' 
@@ -97,15 +99,20 @@ export default function Sidebar() {
               onClick={()=>setType(item.type)}
             >
               {item.icon}
-              {isOpen && <span className="text-lg">{item.title}</span>}
+              {isOpen && <span className="text-2xl">{item.title}</span>}
             </button>
           ))}
+        </div>
+        <div className="p-6 mt-140 flex">
+          {isOpen && <button className=" flex items-center gap-3 py-2 px-4 w-full text-left bg-red-500 text-white hover:bg-red-400 rounded text-2xl">
+            <div><LogOutIcon/></div><div>Logout</div>
+          </button>}
         </div>
       </div>
 
       {isMobile && isOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black bg-opacity-50"
+          className="fixed inset-10 z-30 bg-black bg-opacity-50"
           onClick={toggleSidebar}
         />
       )}

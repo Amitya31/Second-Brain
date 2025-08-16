@@ -3,7 +3,7 @@ import AuthContext from "../Hooks/AuthHook"
 import type { AuthContextType } from "../types/AuthTypes";
 
 interface AuthProps { 
-    children:ReactNode
+  children:ReactNode
 }
 
 
@@ -44,7 +44,7 @@ export const AuthProvider = ({children}:AuthProps) =>{
   };
     return (
         <AuthContext.Provider value={value}>
-            {children}
+          {children}
         </AuthContext.Provider>
 
     )

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -26,8 +26,7 @@ type FormData = {
 const Navbar = () => {
   const [modalOpen,setModalOpen] = useState<boolean>(false)
   const [link,setLink] = useState<string>('')
-  const [shareable,setShareable] = useState<boolean>()
-  const [share,setShare]=useState<boolean>(true)
+  const [shareable,setShareable] = useState<boolean|null>()
   const [formData, setFormData] = useState<FormData>({
     url: "",
     title: "",
@@ -62,27 +61,34 @@ const handleCopy = ()=>{
 
 }
 
-const handleShare = async ()=>{
-  setShareable(true)
-  if(shareable){
-    setShare(true)
-  }else{
-    setShare(false)
-  }
+
+
+useEffect(()=>{
+  const shareContent = async ()=>{
+  
   try {
     const token = localStorage.getItem('token')
-    const response = await axios.post('http://localhost:3000/api/v1/share',{share},
+    
+    const response = await axios.post('http://localhost:3000/api/v1/share',{share:shareable},
       {
         headers:{
           Authorization:`Bearer ${token}`
         }
       }
     )
-    console.log(response)
+    if(shareable){
+      console.log(response.data)
+    }else{
+      console.log("Sharing Stopped",response.data)
+    }
   } catch (err){
     console.log('Error in sharing content',err)
   }
-} 
+}
+if(shareable!==null){
+  shareContent()
+}
+},[shareable]) 
 
 const uploadData = async ()=>{
   try{
@@ -108,7 +114,7 @@ const uploadData = async ()=>{
       {shareable && <Button className="text-xl" variant="secondary" onClick={()=>setShareable(false)}>Stop Sharing</Button>}
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="text-xl" variant="secondary" onClick={handleShare}>Share Content</Button>
+          <Button className="text-xl" variant="secondary" onClick={()=>setShareable(true)}>Share Content</Button>
         </DialogTrigger>
 
         <DialogContent className="bg-black text-white">
