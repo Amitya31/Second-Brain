@@ -53,7 +53,7 @@ export const ShareLink = async (req:Request,res:Response)=>{
    }
 }
 
-export const ShareId = async (req:Request,res:Response)=>{
+export const ShareContent = async (req:Request,res:Response)=>{
     try{
         const {ShareId} = req.params
 

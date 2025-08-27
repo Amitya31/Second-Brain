@@ -1,6 +1,6 @@
 import { Share1Icon, TrashIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/Card";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
 interface UserType {
@@ -23,13 +23,6 @@ interface ContentType {
   __v?: number;
 }
 
-function getEmbedUrl(url: string, type: string): string {
-  if (type === "video" && url.includes("youtube.com/watch?v=")) {
-    const id = url.split("v=")[1]?.split("&")[0];
-    return `https://www.youtube.com/embed/${id}`;
-  }
-  return url;
-}
 
 function ContentCard({ content }: ContentType) {
   const [isTweet, setIsTweet] = useState<boolean>(false);
@@ -38,9 +31,9 @@ function ContentCard({ content }: ContentType) {
     const contentId = id;
     try{
       const token =localStorage.getItem('token')
-      await axios.post(`http://localhost:3000/api/v1/content/${contentId}`,
+      await axios.delete(`http://localhost:3000/api/v1/content/${contentId}`,
         {
-          header:{
+          headers:{
             'Authorization': `Bearer ${token}`
           }
         }
@@ -51,6 +44,35 @@ function ContentCard({ content }: ContentType) {
       console.log(id)
     }
   }
+
+  function getEmbedUrl(url:string, type:string) {
+    try {
+      const parsedUrl = new URL(url); //built-in URL constructor to parse the string into a structured object e.g. parsedUrl.hostname, parsedUrl.pathname, parsedUrl.searchParams
+
+      if (parsedUrl.hostname.includes("youtube.com") && type === "video") {
+        const videoId = parsedUrl.searchParams.get("v");
+        if (videoId) {
+          return `https://www.youtube.com/embed/${videoId}`;
+        }
+      }
+
+      if (parsedUrl.hostname.includes("youtu.be") && type === "video") {
+        const videoId = parsedUrl.pathname.slice(1);
+        if (videoId) {
+          return `https://www.youtube.com/embed/${videoId}`;
+        }
+      }
+
+      return null; // Not a valid YouTube URL
+    } catch (error) {
+      console.error("Invalid URL:", error);
+      return null;
+    }
+  }
+
+  const embedUrl = useMemo(() => {
+    return getEmbedUrl(content.url, content.type);
+  }, [content.url, content.type]);
 
   useEffect(() => {
     if (content.url.includes("twitter.com")|| content.type==='tweet') {
@@ -69,7 +91,7 @@ function ContentCard({ content }: ContentType) {
 
   return (
     <div className="p-3 m-4 w-85">
-      <Card>
+      <Card className="bg-teal-800">
         <CardHeader>
           <div className="text-white">
             {isTweet && <TwitterLogoIcon />}
@@ -87,14 +109,15 @@ function ContentCard({ content }: ContentType) {
 
         <CardContent>
           <div className="h-max-fit w-max-fit">
-            {isTweet ? (
+            {isTweet && (
               <blockquote className="twitter-tweet border-transparent h-5">
                 <a href={content.url}></a>
-              </blockquote>
-            ) : (
+              </blockquote>)
+            } 
+            {embedUrl && (
               <iframe
                 className="border-none w-full h-64 rounded-lg"
-                src={getEmbedUrl(content.url, content.type)}
+                src={embedUrl}
                 title={content.title}
                 allowFullScreen
                 loading="lazy"

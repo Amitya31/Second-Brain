@@ -7,6 +7,8 @@ dotenv.config({
     path:'../'
 })
 
+const JWTSECRET = process.env.ACCESS_TOKEN_SECRET
+
 interface IUser extends Document {
   username: string;
   email: string;
@@ -35,8 +37,18 @@ const UserSchema = new Schema<IUser>({
     }
 })
 
+// UserSchema.pre('save',async function(next){
+//     if(!this.isModified('password')) return next();
+//     try{
+//         this.password = await bcrypt.hash(this.password,10);
+//         next()
+//     }catch(err){
+//         if(err instanceof Error) next(err)
+//     }
+// })
+
 UserSchema.methods.accessToken = function():string{
-    const accessToken = jwt.sign({userId:this._id},"S3CR3TK3Y")
+    const accessToken = jwt.sign({userId:this._id},JWTSECRET as string)
     return accessToken;
 }
 

@@ -19,7 +19,7 @@ function Button({
     ...rest
 }:ButtonProps) {
     const variants :Record<Variants,string> = {
-      "primary":"bg-black text-gray-300 hover:bg-gray-400 dark:bg-",
+      "primary":"bg-teal-800 text-white hover:bg-gray-400 dark:bg-",
       "secondary":"bg-gray-400 text-black-300 hover:bg-purple-300",
       "danger":"bg-red-500 text-white hover:bg-red-400"
     }

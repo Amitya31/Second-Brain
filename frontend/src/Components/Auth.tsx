@@ -3,7 +3,6 @@ import {  useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardFooter, CardHeader } from './ui/Card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/Tabs'
-import Button from './ui/Button'
 import { Eye, EyeOff } from 'lucide-react'
 import { useAuth } from "../Hooks/useAuth";
 
@@ -88,23 +87,23 @@ export default function Auth() {
 
     
   return (
-    <div className='min-h-screen bg-black w-full flex'>
-        <div className='w-3/5 flex items-center justify-center'>
-        <div className="text-center lg:text-left mx-auto px-10">
-         <div className='text-white/45 text-6xl p-3 rounded-4xl font-semibold'>
-            Welcome to the website
+    <div className='min-h-screen bg-black w-full lg:flex'>
+        <div className='lg:w-3/5 flex items-center justify-center'>
+        <div className=" mx-auto px-10 mb-10 lg:mb-0">
+         <div className='ml-7 text-white/45 text-6xl p-3 rounded-4xl font-semibold'>
+            Welcome to Punk Records
          </div>
          <div className=''></div>
         </div>
         </div>
         <div className='flex items-center justify-center py-6'>
-            <div className='bg-gray-600 backdrop-blur-sm text-white/60 w-full p-6 text-2xl rounded-lg'>
+            <div className='bg-gray-600 backdrop-blur-sm text-white/60 w-full p-6 text-2xl rounded-lg m-2 lg:m-0'>
               <Tabs defaultValue='signup' value={activeTab} onValueChange={handleTabChange} className='w-full h-full'>
                 <TabsList className=' rounded-4xl bg-gray-700 backdrop-blur-5xl p-1'>
-                    <TabsTrigger value='login' className='px-19 m-1 ml-3 data-[state=active]:bg-black  data-[state=active]:rounded-2xl '>
+                    <TabsTrigger value='login' className='px-10 lg:px-19 m-1 ml-3 data-[state=active]:bg-black  data-[state=active]:rounded-2xl '>
                         Login
                     </TabsTrigger>
-                    <TabsTrigger value='signup' className='px-19 m-1 ml-5 data-[state=active]:bg-black  data-[state=active]:rounded-2xl '>
+                    <TabsTrigger value='signup' className='px-10 lg:px-19 m-1 ml-5 data-[state=active]:bg-black  data-[state=active]:rounded-2xl '>
                         Signup
                     </TabsTrigger>
                 </TabsList>
@@ -120,42 +119,43 @@ export default function Auth() {
                     </CardHeader>
                     <form onSubmit={handleSubmit}>
                         <CardContent>
-                            <div className='w-full text-white flex flex-col'>
+                            <div className='my-3 w-full text-white flex flex-col'>
                                 <label htmlFor='email'>Email</label>
                                 <input 
                                 placeholder='Enter email'
                                 name='email'
                                 onChange={handleLoginChange}
                                 value={loginFormData.email}
-                                className='border-gray-300 h-10 focus:border-gray-3
-                                00  rounded-lg'
+                                className='border-gray-300 h-10 focus:border-gray-300  rounded-lg'
                                 required
                                 />
                             </div>
                             <div>
-                                <div className='w-full text-white flex flex-col'>
+                                <div className='my-3 w-full text-white flex flex-col'>
                                 <label htmlFor='password'>Password</label>
+                                <div className='flex'>
                                 <input 
                                 placeholder='Enter password'
                                 type={showPassword ? 'text':'password'}
                                 name='password'
                                 onChange={handleLoginChange}
                                 value={loginFormData.password}
-                                className='border-gray-300 h-10 focus:border-gray-3
-                                00  rounded-lg'
+                                className='border-gray-300 h-10 focus:border-none
+                                00 w-full  rounded-lg'
                                 required
                                 />
                                 <button className='text-white/20' onClick={()=>setShowPassword(!showPassword)}>
                                     {showPassword ? <Eye /> : <EyeOff />}
                                 </button>
+                                </div>
                             </div>
                             </div>
                         </CardContent>
                         <CardFooter>
                             <div className='w-full flex justify-center'>
-                                <Button variant='primary' className=' w-45' type='submit'>
+                                <button className='p-1 rounded-md w-45 bg-black hover:bg-gray-700 cursor-pointer' type='submit'>
                                     Login
-                                </Button>
+                                </button>
                             </div>
                         </CardFooter>
                     </form>
@@ -174,7 +174,7 @@ export default function Auth() {
                     </CardHeader>
                     <form onSubmit={handleSubmit}>
                         <CardContent>
-                            <div className='w-full text-white flex flex-col'>
+                            <div className='my-3 w-full text-white flex flex-col'>
                                 <label htmlFor='username'>Username</label>
                                 <input 
                                 placeholder='Enter Username'
@@ -187,7 +187,7 @@ export default function Auth() {
                                 required
                                 />
                             </div>
-                            <div className='w-full text-white flex flex-col'>
+                            <div className='my-3 w-full text-white flex flex-col'>
                                 <label htmlFor='email'>Email</label>
                                 <input 
                                 placeholder='Enter email'
@@ -200,7 +200,7 @@ export default function Auth() {
                                 />
                             </div>
                             <div>
-                                <div className='w-full text-white flex flex-col'>
+                                <div className='my-3 w-full text-white flex flex-col'>
                                 <label htmlFor='password'>Password</label>
                                 <input 
                                 placeholder='Enter password'
@@ -220,9 +220,9 @@ export default function Auth() {
                         </CardContent>
                         <CardFooter>
                             <div className='w-full flex justify-center'>
-                                <Button variant='primary' className=' w-45' type='submit'>
+                                <button className=' p-1 rounded-md w-45 bg-black hover:bg-gray-700 cursor-pointer' type='submit'>
                                     Create Account
-                                </Button>
+                                </button>
                             </div>
                         </CardFooter>
                     </form>

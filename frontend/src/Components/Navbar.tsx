@@ -14,7 +14,7 @@ import {
 import  Button  from "./ui/Button";
 import axios from "axios";
 import { CopyIcon } from "@radix-ui/react-icons";
-import { CopyCheckIcon } from "lucide-react";
+import { CopyCheckIcon, Loader } from "lucide-react";
 
 type FormData = {
   url: string;
@@ -27,6 +27,7 @@ const Navbar = () => {
   const [modalOpen,setModalOpen] = useState<boolean>(false)
   const [link,setLink] = useState<string>('')
   const [shareable,setShareable] = useState<boolean|null>()
+  const [loading,setLoading] = useState<boolean>(true)
   const [formData, setFormData] = useState<FormData>({
     url: "",
     title: "",
@@ -81,6 +82,7 @@ useEffect(()=>{
     }else{
       console.log("Sharing Stopped",response.data)
     }
+    setLoading(false)
   } catch (err){
     console.log('Error in sharing content',err)
   }
@@ -102,27 +104,30 @@ const uploadData = async ()=>{
         }
     );
     const data = response.data;
-    console.log(data)
+    setLink(`http://localhost:5173/content/${data}`)
+    setLoading(false)
   }catch(e){
     if(e instanceof Error)
     console.log(e.message)
   }
+  
 }
 
   return (
-    <div className="lg:px-0 flex justify-end bg-gray-400 p-4 gap-x-4">
-      {shareable && <Button className="text-xl" variant="secondary" onClick={()=>setShareable(false)}>Stop Sharing</Button>}
+    <div className="lg:px-0 flex justify-end bg-black p-4 gap-x-4">
+      {shareable && <Button className="text-xl p-1 rounded-md" variant="secondary" onClick={()=>setShareable(false)}>Stop Sharing</Button>}
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="text-xl" variant="secondary" onClick={()=>setShareable(true)}>Share Content</Button>
+          <Button disabled={shareable?true:false} className="text-xl p-1 rounded-md" variant="secondary" onClick={()=>setShareable(true)}>Share Content</Button>
         </DialogTrigger>
 
         <DialogContent className="bg-black text-white">
           <DialogHeader>
+            <DialogClose>X</DialogClose>
             <DialogTitle >Share your brain</DialogTitle>
             <div className="flex"></div>
             <div className="bg-zinc-600 text-xl text-gray-300 p-1 rounded-sm">
-              sdgahdajdajdadad
+              {loading?'...loading':link}
             </div>
             <button onClick={handleCopy}>
               <CopyIcon/>
@@ -139,7 +144,7 @@ const uploadData = async ()=>{
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogTrigger asChild>
-          <Button className="text-xl" variant="primary">Add Content</Button>
+          <Button className="text-xl p-1 rounded-md" variant="primary">Add Content</Button>
         </DialogTrigger>
 
         <DialogContent className="bg-black ">
@@ -203,8 +208,8 @@ const uploadData = async ()=>{
                   Cancel
                 </Button>
 
-              <Button className="text-xl" type="submit" variant="secondary">
-                Submit
+              <Button className="text-xl" disabled={loading?false:true} type="submit" variant="secondary">
+                {loading?<Loader/>:'Submit'}
               </Button>
             </DialogFooter>
           </form>

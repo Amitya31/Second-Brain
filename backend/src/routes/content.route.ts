@@ -8,5 +8,5 @@ router.post('/content',VerifyJwt,CreateContent)
 //@ts-ignore
 router.get('/content',VerifyJwt , getContent)
 //@ts-ignore
-router.post('/content/:id',VerifyJwt,deleteContent)
+router.delete('/content/:id',VerifyJwt,deleteContent)
 export default router

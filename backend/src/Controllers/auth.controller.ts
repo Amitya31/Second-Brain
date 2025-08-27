@@ -1,6 +1,8 @@
 import {Request,Response} from 'express';
 import { UserModel } from '../models/user.model';
 import bcrypt from 'bcrypt'
+import dotenv from 'dotenv'
+dotenv.config()
 
 interface Register{
     username:string,
@@ -9,40 +11,50 @@ interface Register{
     accessToken(): string
 }
 
+const secret = process.env.secret
+
 export const registerUser = async (req:Request<{},{},Register>,res:Response):Promise<void>=>{
     
     const {username,password,email} = req.body
 
     try{
         
-        const hashedPassword = await bcrypt.hash(password,10)
-        const newUser = await UserModel.create({
-            username,
-            password:hashedPassword,
-            email,
-        })
+      const hashedPassword = await bcrypt.hash(password,10)
 
-        const token = await newUser.accessToken()
-        const cookieOptions = {
-          httpOnly: true,          // Prevent JS access (secure from XSS)
-          secure: true, // Only HTTPS in prod
-          sameSite:"strict" as const, //typescript accepts strict as a literal
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-        };
-
-        res.status(200).cookie("token",token,cookieOptions ).json({
-            message:"Registration Sucessful",
-            token:token,
-            success:true,
+      const exisitingUser = await UserModel.findOne({email:email});
+      if(exisitingUser){
+        res.status(402).json({
+          success:false,
+          message:"User Already Exist"
         })
+      }
+      const newUser = await UserModel.create({
+          username,
+          password:hashedPassword,
+          email,
+      })
+
+      const token = await newUser.accessToken()
+      const cookieOptions = {
+        httpOnly: true,          // Prevent JS access (secure from XSS)
+        secure: true, // Only HTTPS in prod
+        sameSite:"strict" as const, //typescript accepts strict as a literal
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      };
+
+      res.status(200).cookie("token",token,cookieOptions ).json({
+          message:"Registration Sucessful",
+          token:token,
+          success:true,
+      })
     }catch(e){
-        if(e instanceof Error){
-          console.log('Error occured',e.message)
-        }
-        res.status(500).json({
-          message:'Internal Server Error',
-          success: false
-        })
+      if(e instanceof Error){
+        console.log('Error occured',e.message)
+      }
+      res.status(500).json({
+        message:'Internal Server Error',
+        success: false
+      })
     }
 }
 
@@ -82,6 +94,7 @@ export const loginser = async (req:Request,res:Response):Promise<Response>=>{
       sameSite:"strict" as const, //typescript accepts strict as a literal
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     };
+
 
     return res.status(200).cookie("token",token,cookieOptions ).json({
       message: 'Login successful',

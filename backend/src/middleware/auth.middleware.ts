@@ -12,35 +12,36 @@ declare module "express-serve-static-core" {
 }
 
 const VerifyJwt = async (req:Request,res:Response,next:NextFunction)=>{
+  const secret = process.env.ACCESS_TOKEN_SECRET;
     
-    try{
-        const token = req.headers.authorization?.split(' ')[1] || req.cookies.token
+  try{
+    const token = req.headers.authorization?.split(' ')[1] || req.cookies.token
 
-        const decoded = jwt.verify(token as string,"S3CR3TK3Y")
-
-
-        if(!decoded){
-            res.status(404).json({
-                message:"Unauthorized access",
-                success:false,
-            })
-        }
-
-        const { userId } = decoded as JwtPayload;
+    const decoded = jwt.verify(token as string,secret as string)
 
 
-        const userdetail = await UserModel.findById(userId);
-        req.userdetail = userdetail;
-        next()
-    }catch(e){
-        if(e instanceof Error){
+    if(!decoded){
+        res.status(404).json({
+            message:"Unauthorized access",
+            success:false,
+        })
+    }
+
+    const { userId } = decoded as JwtPayload;
+
+
+    const userdetail = await UserModel.findById(userId);
+    req.userdetail = userdetail;
+    next()
+  }catch(e){
+    if(e instanceof Error){
       console.log('Error occured',e.message)
     }
-        return res.status(500).json({
-        message: "Invalid or expired token",
-        success: false,
-        });
-    }
+    return res.status(500).json({
+      message: "Invalid or expired token",
+      success: false,
+    });
+  }
 }  
 
 export default VerifyJwt

@@ -1,13 +1,13 @@
-import type { ReactNode } from "react"
+import type { HTMLAttributes, ReactNode } from "react"
 
 type Cardprops = {
-    children:ReactNode
-}
-const Card = ({children}:Cardprops) => {
+    children: ReactNode
+} & HTMLAttributes<HTMLDivElement>
+const Card = ({children,className="",...rest}:Cardprops) => {
  
     return (
         <div>
-            <div className=" max-h-fit rounded-2xl p-2 bg-teal-800 ">
+            <div className={` max-h-fit rounded-2xl p-2 ${className}`} {...rest}>
                 {children}
             </div>
         </div>
