@@ -2,6 +2,7 @@ import {Request,Response} from 'express';
 import { UserModel } from '../models/user.model';
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
+import jwt,{JwtPayload} from 'jsonwebtoken'
 dotenv.config()
 
 interface Register{
@@ -12,8 +13,9 @@ interface Register{
 }
 
 const secret = process.env.secret
+const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET as string
 
-export const registerUser = async (req:Request<{},{},Register>,res:Response):Promise<void>=>{
+export const registerUser = async (req:Request<{},{},Register>,res:Response)=>{
     
     const {username,password,email} = req.body
 
@@ -23,7 +25,7 @@ export const registerUser = async (req:Request<{},{},Register>,res:Response):Pro
 
       const exisitingUser = await UserModel.findOne({email:email});
       if(exisitingUser){
-        res.status(402).json({
+        return res.status(402).json({
           success:false,
           message:"User Already Exist"
         })
@@ -34,7 +36,8 @@ export const registerUser = async (req:Request<{},{},Register>,res:Response):Pro
           email,
       })
 
-      const token = await newUser.accessToken()
+      const accesstoken = await newUser.accessToken()
+      const refreshtoken = await newUser.refreshToken()
       const cookieOptions = {
         httpOnly: true,          // Prevent JS access (secure from XSS)
         secure: true, // Only HTTPS in prod
@@ -42,9 +45,9 @@ export const registerUser = async (req:Request<{},{},Register>,res:Response):Pro
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       };
 
-      res.status(200).cookie("token",token,cookieOptions ).json({
+      return res.status(200).cookie("token",refreshtoken,cookieOptions ).json({
           message:"Registration Sucessful",
-          token:token,
+          token:accesstoken,
           success:true,
       })
     }catch(e){
@@ -86,7 +89,8 @@ export const loginser = async (req:Request,res:Response):Promise<Response>=>{
       });
     }
 
-    const token = await existingUser.accessToken()
+    const accesstoken = await existingUser.accessToken()
+    const refreshToken = await existingUser.refreshToken()
 
     const cookieOptions = {
       httpOnly: true,          // Prevent JS access (secure from XSS)
@@ -96,10 +100,10 @@ export const loginser = async (req:Request,res:Response):Promise<Response>=>{
     };
 
 
-    return res.status(200).cookie("token",token,cookieOptions ).json({
+    return res.status(200).cookie("token",refreshToken,cookieOptions ).json({
       message: 'Login successful',
       success: true,
-      token,
+      token:accesstoken,
     });
   }catch(e){
     if(e instanceof Error){
@@ -110,6 +114,39 @@ export const loginser = async (req:Request,res:Response):Promise<Response>=>{
       success: false
     })
   }
+};
+
+export const refreshAccessToken = async (req: Request, res: Response) => {
+  try {
+    const token = req.cookies?.token;
+    if (!token) {
+      return res.status(401).json({ success: false, message: "No refresh token provided" });
+    }
+
+    const decoded = jwt.verify(token,REFRESH_SECRET)
+      const user = await UserModel.findById((decoded as JwtPayload).userId );
+
+    if (!user) {
+      return res.status(401).json({ success: false, message: "Invalid refresh token" });
+    }
+
+    const newAccessToken = user.accessToken();
+
+    return res.status(200).json({
+      success: true,
+      accessToken: newAccessToken,
+    });
+  } catch (err) {
+    console.error("Refresh token error:", (err as Error).message);
+    return res.status(401).json({ success: false, message: "Invalid or expired refresh token" });
+  }
+};
+
+export const logoutUser = (_req: Request, res: Response) => {
+  res.clearCookie("token").status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
 };
 
 

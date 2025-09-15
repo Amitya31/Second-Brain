@@ -7,7 +7,8 @@ dotenv.config({
     path:'../'
 })
 
-const JWTSECRET = process.env.ACCESS_TOKEN_SECRET
+const JWTSECRET = process.env.ACCESS_TOKEN_SECRET;
+const JWTSECRET2 = process.env.REFRESH_TOKEN_SECRET
 
 interface IUser extends Document {
   username: string;
@@ -48,12 +49,12 @@ const UserSchema = new Schema<IUser>({
 // })
 
 UserSchema.methods.accessToken = function():string{
-    const accessToken = jwt.sign({userId:this._id},JWTSECRET as string)
+    const accessToken = jwt.sign({userId:this._id},JWTSECRET as string,{expiresIn:'15m'})
     return accessToken;
 }
 
 UserSchema.methods.refreshToken =  function(){
-    const refreshToken = jwt.sign({userId:this._id},process.env.JWTSECRET as string ,{expiresIn:'7d'})
+    const refreshToken = jwt.sign({userId:this._id},JWTSECRET2 as string ,{expiresIn:'7d'})
     return refreshToken;
 }
 
