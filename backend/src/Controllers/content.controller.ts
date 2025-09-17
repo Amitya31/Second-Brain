@@ -98,6 +98,8 @@ export const EditContent = async (req:Request,res:Response)=>{
             newTagIds=createdTags.map(t=>t._id.toString());
         }
 
+       const allTagIds = [...existingTagIds.map(id => id.toString()), ...newTagIds]; // Fixed tag IDs combination
+
         const updatedContent = await ContentModel.findByIdAndUpdate(id,{
             url,
             type:contentType,
@@ -178,7 +180,7 @@ export const getContent = async(req:Request,res:Response)=>{
     }).populate("user","username").populate("tags",'title')
     
     return res.status(200).json({
-        message:"Retrived Successfully",
+        message:"Retrieved Successfully",
         data:Contentdata,
         success:true
         

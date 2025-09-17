@@ -12,7 +12,7 @@ interface Register{
     accessToken(): string
 }
 
-const secret = process.env.secret
+const secret = process.env.ACCESS_TOKEN_SECRET
 const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET as string
 
 export const registerUser = async (req:Request<{},{},Register>,res:Response)=>{
@@ -39,10 +39,11 @@ export const registerUser = async (req:Request<{},{},Register>,res:Response)=>{
       const accesstoken = await newUser.accessToken()
       const refreshtoken = await newUser.refreshToken()
       const cookieOptions = {
-        httpOnly: true,          // Prevent JS access (secure from XSS)
-        secure: true, // Only HTTPS in prod
-        sameSite:"strict" as const, //typescript accepts strict as a literal
+        httpOnly: true,         // Prevent JS access (secure from XSS)
+        secure:process.env.NODE_ENV === 'production',//typescript accepts strict as a literal
+        sameSite: process.env.NODE_ENV==='production' ? 'none' as const : 'strict' as const, // Only HTTPS in prod
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        path:'/'
       };
 
       return res.status(200).cookie("token",refreshtoken,cookieOptions ).json({
@@ -93,10 +94,11 @@ export const loginser = async (req:Request,res:Response):Promise<Response>=>{
     const refreshToken = await existingUser.refreshToken()
 
     const cookieOptions = {
-      httpOnly: true,          // Prevent JS access (secure from XSS)
-      secure: true, // Only HTTPS in prod
-      sameSite:"strict" as const, //typescript accepts strict as a literal
+      httpOnly: true,         // Prevent JS access (secure from XSS)
+      secure:process.env.NODE_ENV === 'production',//typescript accepts strict as a literal
+      sameSite: process.env.NODE_ENV==='production' ? 'none' as const : 'strict' as const, // Only HTTPS in prod
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path:'/'
     };
 
 
@@ -143,7 +145,13 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
 };
 
 export const logoutUser = (_req: Request, res: Response) => {
-  res.clearCookie("token").status(200).json({
+  const cookieOptions = {
+    httpOnly: true,         // Prevent JS access (secure from XSS)
+    secure:process.env.NODE_ENV === 'production',//typescript accepts strict as a literal
+    sameSite: process.env.NODE_ENV==='production' ? 'none' as const : 'strict' as const, // Only HTTPS in prod
+    path:'/'
+  };
+  res.clearCookie("token",cookieOptions).status(200).json({
     success: true,
     message: "Logged out successfully",
   });
