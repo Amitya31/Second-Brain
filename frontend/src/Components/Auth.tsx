@@ -57,7 +57,10 @@ export default function Auth() {
             const endpoint = activeTab==='signup'? 'http://localhost:3000/api/v1/user/register' : 'http://localhost:3000/api/v1/user/login'
             const formdata = activeTab==='signup' ? formData : loginFormData
             const response = await axios.post(endpoint, formdata, {
-                withCredentials: true,  // browser can only access cookies if it is set true
+                withCredentials: true,             
+                headers:{
+                    'Content-Type':'application/json',
+                },  // browser can only access cookies if it is set true
             })
             const data = response.data
             const token = data.token

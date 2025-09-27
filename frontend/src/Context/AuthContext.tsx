@@ -43,7 +43,7 @@ export const AuthProvider = ({children}:AuthProps) =>{
 
   const refreshAccessToken = async () => {
     try {
-      const res = await axios.post("http://localhost:3000/api/auth/refresh", {
+      const res = await axios.post("http://localhost:3000/api/user/refresh", {
         method: "POST",
         credentials: "include", // sends refresh token cookie
       });

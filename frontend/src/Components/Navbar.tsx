@@ -47,12 +47,13 @@ const Navbar = () => {
     }
   };
 
-const handleSubmit = (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   console.log("Submitted:", formData);
+  console.log(formData)
   
   // Handle submission logic here (API call, validation, etc.)
-  uploadData();
+  await uploadData();
 
   setModalOpen(prev=>!prev)
 };
@@ -98,10 +99,11 @@ const uploadData = async ()=>{
     const response = await axios.post('http://localhost:3000/api/v1/content',formData,
         {
         headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true
       }
-        }
     );
     const data = response.data;
     setLink(`http://localhost:5173/content/${data}`)
@@ -208,8 +210,8 @@ const uploadData = async ()=>{
                   Cancel
                 </Button>
 
-              <Button className="text-xl" disabled={loading?false:true} type="submit" variant="secondary">
-                {loading?<Loader/>:'Submit'}
+              <Button className="text-xl" disabled={loading} type="submit" variant="secondary">
+                {loading ? <Loader className="animate-spin" /> : 'Submit'}
               </Button>
             </DialogFooter>
           </form>

@@ -17,16 +17,16 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const connectDB = function () {
     return __awaiter(this, void 0, void 0, function* () {
-        // const uri = process.env.MONGODB_URL as string
+        const uri = process.env.MONGODB_URL;
         try {
-            //  if (!uri) {
-            //    throw new Error('MONGODB_URL is not defined in .env');
-            //  }
-            yield mongoose_1.default.connect('mongodb+srv://amit31:nIUft4pXBHRJRbU7@cluster0.tee05.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
-            console.log('✅ MongoDB connected');
+            if (!uri) {
+                throw new Error('MONGODB_URL is not defined in .env');
+            }
+            yield mongoose_1.default.connect(uri);
+            console.log('MongoDB connected');
         }
         catch (e) {
-            console.error('❌ MongoDB connection failed:', e);
+            console.error(' MongoDB connection failed:', e);
             process.exit(1);
         }
     });

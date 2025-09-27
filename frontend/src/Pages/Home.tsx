@@ -1,8 +1,8 @@
-import axios from "axios";
-import Applayout from "../Components/Applayout";
+
 import ContentCard from '../Components/ContentCard'
 import { useEffect, useState } from "react";
 import useContentType from "../Hooks/ContentTypeHook";
+import api from "../config/api";
 
 
 interface UserType {
@@ -32,7 +32,7 @@ const Home = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:3000/api/v1/content`, {
+      const response = await api.get(`/v1/content`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

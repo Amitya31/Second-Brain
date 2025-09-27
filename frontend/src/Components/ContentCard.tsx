@@ -1,7 +1,7 @@
 import { Share1Icon, TrashIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/Card";
 import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import api from "../config/api";
 
 interface UserType {
   username: string;
@@ -23,31 +23,30 @@ interface ContentType {
   __v?: number;
 }
 
-
-function ContentCard({ content }: ContentType) {
+function ContentCard({ content }: { content: ContentType }) {
   const [isTweet, setIsTweet] = useState<boolean>(false);
 
-  async function handleDelete(id:string){
+  async function handleDelete(id: string) {
     const contentId = id;
-    try{
-      const token =localStorage.getItem('token')
-      await axios.delete(`http://localhost:3000/api/v1/content/${contentId}`,
+    try {
+      const token = localStorage.getItem('token');
+      await api.delete(`/v1/content/${contentId}`,
         {
-          headers:{
+          headers: {
             'Authorization': `Bearer ${token}`
           }
         }
-      )
-      console.log(id)
-    }catch(err){
-      console.log('Error in deleting Content',err)
-      console.log(id)
+      );
+      console.log(id);
+    } catch (err) {
+      console.log('Error in deleting Content', err);
+      console.log(id);
     }
   }
 
-  function getEmbedUrl(url:string, type:string) {
+  function getEmbedUrl(url: string, type: string) {
     try {
-      const parsedUrl = new URL(url); //built-in URL constructor to parse the string into a structured object e.g. parsedUrl.hostname, parsedUrl.pathname, parsedUrl.searchParams
+      const parsedUrl = new URL(url);
 
       if (parsedUrl.hostname.includes("youtube.com") && type === "video") {
         const videoId = parsedUrl.searchParams.get("v");
@@ -63,7 +62,7 @@ function ContentCard({ content }: ContentType) {
         }
       }
 
-      return null; // Not a valid YouTube URL
+      return null;
     } catch (error) {
       console.error("Invalid URL:", error);
       return null;
@@ -75,10 +74,9 @@ function ContentCard({ content }: ContentType) {
   }, [content.url, content.type]);
 
   useEffect(() => {
-    if (content.url.includes("twitter.com")|| content.type==='tweet') {
+    if (content.url.includes("twitter.com") || content.type === 'tweet') {
       setIsTweet(true);
 
-      // Load Twitter script
       const script = document.createElement("script");
       script.src = "https://platform.twitter.com/widgets.js";
       script.async = true;
@@ -87,7 +85,7 @@ function ContentCard({ content }: ContentType) {
     } else {
       setIsTweet(false);
     }
-  }, [content.url,content.type]);
+  }, [content.url, content.type]);
 
   return (
     <div className="p-3 m-4 w-85">
@@ -101,7 +99,7 @@ function ContentCard({ content }: ContentType) {
           </div>
           <div className=" flex text-white gap-x-3">
             <Share1Icon />
-            <button className="cursor-pointer" onClick={()=>handleDelete(content._id)}>
+            <button className="cursor-pointer" onClick={() => handleDelete(content._id)}>
               <TrashIcon />
             </button>
           </div>
@@ -112,8 +110,8 @@ function ContentCard({ content }: ContentType) {
             {isTweet && (
               <blockquote className="twitter-tweet border-transparent h-5">
                 <a href={content.url}></a>
-              </blockquote>)
-            } 
+              </blockquote>
+            )}
             {embedUrl && (
               <iframe
                 className="border-none w-full h-64 rounded-lg"

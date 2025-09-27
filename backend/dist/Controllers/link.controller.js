@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ShareIdd = exports.ShareLink = void 0;
+exports.ShareContent = exports.ShareLink = void 0;
 const links_model_1 = __importDefault(require("../models/links.model"));
 const hash_1 = require("../utils/hash");
 const content_model_1 = require("../models/content.model");
@@ -62,7 +62,7 @@ const ShareLink = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.ShareLink = ShareLink;
-const ShareIdd = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const ShareContent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { ShareId } = req.params;
         const UserContent = yield links_model_1.default.findOne({
@@ -92,4 +92,4 @@ const ShareIdd = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
 });
-exports.ShareIdd = ShareIdd;
+exports.ShareContent = ShareContent;

@@ -85,6 +85,7 @@ const EditContent = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             } }));
             newTagIds = createdTags.map(t => t._id.toString());
         }
+        const allTagIds = [...existingTagIds.map(id => id.toString()), ...newTagIds]; // Fixed tag IDs combination
         const updatedContent = yield content_model_1.ContentModel.findByIdAndUpdate(id, {
             url,
             type: contentType,
@@ -153,9 +154,9 @@ const getContent = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }
         const Contentdata = yield content_model_1.ContentModel.find({
             user: userId
-        }).populate("user", "username");
+        }).populate("user", "username").populate("tags", 'title');
         return res.status(200).json({
-            message: "Retrived Successfully",
+            message: "Retrieved Successfully",
             data: Contentdata,
             success: true
         });

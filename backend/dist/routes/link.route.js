@@ -10,5 +10,5 @@ const router = (0, express_1.Router)();
 //@ts-ignore
 router.post('/share', auth_middleware_1.default, link_controller_1.ShareLink);
 //@ts-ignore
-router.get('/share/:ShareId', auth_middleware_1.default, link_controller_1.ShareIdd);
+router.get('/share/:ShareId', auth_middleware_1.default, link_controller_1.ShareContent);
 exports.default = router;

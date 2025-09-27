@@ -11,6 +11,8 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config({
     path: '../'
 });
+const JWTSECRET = process.env.ACCESS_TOKEN_SECRET;
+const JWTSECRET2 = process.env.REFRESH_TOKEN_SECRET;
 const UserSchema = new mongoose_2.Schema({
     username: {
         type: String,
@@ -30,12 +32,21 @@ const UserSchema = new mongoose_2.Schema({
         match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     }
 });
+// UserSchema.pre('save',async function(next){
+//     if(!this.isModified('password')) return next();
+//     try{
+//         this.password = await bcrypt.hash(this.password,10);
+//         next()
+//     }catch(err){
+//         if(err instanceof Error) next(err)
+//     }
+// })
 UserSchema.methods.accessToken = function () {
-    const accessToken = jsonwebtoken_1.default.sign({ userId: this._id }, "S3CR3TK3Y");
+    const accessToken = jsonwebtoken_1.default.sign({ userId: this._id }, JWTSECRET, { expiresIn: '15m' });
     return accessToken;
 };
 UserSchema.methods.refreshToken = function () {
-    const refreshToken = jsonwebtoken_1.default.sign({ userId: this._id }, process.env.JWTSECRET, { expiresIn: '7d' });
+    const refreshToken = jsonwebtoken_1.default.sign({ userId: this._id }, JWTSECRET2, { expiresIn: '7d' });
     return refreshToken;
 };
 exports.UserModel = mongoose_1.default.model('User', UserSchema);

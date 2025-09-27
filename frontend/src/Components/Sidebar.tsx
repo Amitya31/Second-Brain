@@ -9,9 +9,9 @@ import { useAuth } from "../Hooks/useAuth";
 
 
 interface sidebaritemsProp  {
-    title:string,
-    icon: ReactNode,
-    type:string,
+  title:string,
+  icon: ReactNode,
+  type:string,
 }
 
 const SidebarItems: Array<sidebaritemsProp> = [
