@@ -6,7 +6,7 @@ import cors, { CorsOptions } from 'cors'
 
 app.use(express.json())
 
-const allowedOrigins = ["http://localhost:5173"]; // frontend URL
+const allowedOrigins = ["http://localhost:5173","https://second-brain-theta-five.vercel.app"]; // frontend URL
 
 const corsOptions: CorsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
