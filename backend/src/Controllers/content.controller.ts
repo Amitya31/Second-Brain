@@ -174,7 +174,8 @@ export const getContent = async(req:Request,res:Response)=>{
         })
     }
 
-    
+    console.log(userId)
+
     const Contentdata = await ContentModel.find({
         user:userId
     }).populate("user","username").populate("tags",'title')

@@ -1,6 +1,6 @@
-import axios from 'axios'
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import api from '../config/api'
 
 export default function SharedContent() {
     const {sharedContent} = useParams()
@@ -8,7 +8,7 @@ export default function SharedContent() {
     const fetchContent = async ()=>{
       try{
         const token = await localStorage.getItem('token')
-        const response = await axios.get(`http://localhost:3000/api/v1/share/${sharedContent}`,{
+        const response = await api.get(`/api/v1/share/${sharedContent}`,{
           headers: {
             Authorization: `Bearer ${token}`
           }

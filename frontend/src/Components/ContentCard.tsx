@@ -2,6 +2,8 @@ import { Share1Icon, TrashIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/Card";
 import { useEffect, useMemo, useState } from "react";
 import api from "../config/api";
+import { Dialog,DialogClose,DialogContent,DialogHeader,DialogTitle,DialogTrigger } from "./ui/Dialog";
+import Button from "./ui/Button";
 
 interface UserType {
   username: string;
@@ -99,14 +101,27 @@ function ContentCard({ content }: { content: ContentType }) {
           </div>
           <div className=" flex text-white gap-x-3">
             <Share1Icon />
-            <button className="cursor-pointer" onClick={() => handleDelete(content._id)}>
-              <TrashIcon />
-            </button>
+            <Dialog >
+              <DialogTrigger>
+                <button className="cursor-pointer" >
+                  <TrashIcon />
+                </button>
+              </DialogTrigger>
+              <DialogContent className="bg-black">
+                <DialogHeader className="flex items-center text-white">
+                  <DialogClose className="inset-y-0 ml-100 cursor-pointer">X</DialogClose>
+                  <DialogTitle className="">Delete the Content</DialogTitle>
+                </DialogHeader>
+                <h4 className="flex justify-center text-white">Are you sure you want to Delete the Content?</h4>
+              <Button className="p-2 rounded-md" variant="danger" onClick={() => handleDelete(content._id)}>Delete</Button>
+
+              </DialogContent>
+            </Dialog>
           </div>
         </CardHeader>
 
         <CardContent>
-          <div className="h-max-fit w-max-fit">
+          <div className="h-min-fit w-max-fit">
             {isTweet && (
               <blockquote className="twitter-tweet border-transparent h-5">
                 <a href={content.url}></a>

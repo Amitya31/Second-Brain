@@ -69,23 +69,21 @@ export default function Sidebar() {
             : "w-0 overflow-hidden"
           : isOpen
           ? "w-90"
-          : "w-15",
+          : "w-0",
       ),
     [isMobile, isOpen]
   );
 
   return (
     <>
-      
-
       <div className={sidebarClass}>
         <button
         onClick={toggleSidebar}
-        className="fixed left-0 top-0 lg:left-4 z-50 lg:static lg:ml-2 p-2 bg-black text-white rounded hover:bg-gray-700"
+        className="fixed left-0 top-0 mt-2 lg:left-4 z-50 lg:static lg:ml-2 p-3 bg-transparent text-white rounded hover:bg-gray-700"
       >
         <PanelLeftIcon className="size-6" />
       </button>
-        <div className="p-6">
+        <div className="p-1">
           {SidebarItems.map((item) => (
             isOpen && <button
               key={item.type}
@@ -93,34 +91,29 @@ export default function Sidebar() {
                 isMobile ? 
                 isOpen 
                  ? 'hover:bg-gray-400'
-                 : 'hover:none' 
+                 : 'hover:none w-0' 
                 : isOpen 
                  ? 'hover:bg-gray-400' 
-                 : 'hover:none',
+                 : 'hover:none w-0',
                 item.type === isActive
-                 ? "bg-teal-700 text-white font-semibold"
+                 ? "bg-neutral-500 text-white font-semibold"
                  : "",
                 )}
               onClick={()=>{setType(item.type);setActive(item.type)}}
             >
               {item.icon}
-              {isOpen && <span className="text-2xl">{item.title}</span>}
+              {isOpen && <span className="text-xl">{item.title}</span>}
             </button>
           ))}
         </div>
-        <div className="p-6 mt-140 flex">
-          {isOpen && <button className=" flex items-center gap-3 py-2 px-4 w-full text-left bg-red-500 text-white hover:bg-red-400 rounded text-2xl" onClick={logout}>
+        <div className="p-6 mt-149 flex">
+          {isOpen && <button className=" flex items-center gap-3 py-2 px-4 min-w-full text-left bg-red-500 text-white hover:bg-red-400 rounded text-2xl" onClick={logout}>
             <div><LogOutIcon/></div><div>Logout</div>
           </button>}
         </div>
       </div>
 
-      {isMobile && isOpen && (
-        <div
-          className="fixed inset-10 z-30 bg-black bg-opacity-50"
-          onClick={toggleSidebar}
-        />
-      )}
+      
     </>
   );
 }
