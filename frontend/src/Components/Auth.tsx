@@ -1,10 +1,11 @@
-import axios from 'axios'
+
 import {  useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardFooter, CardHeader } from './ui/Card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/Tabs'
 import { Eye, EyeOff } from 'lucide-react'
 import { useAuth } from "../Hooks/useAuth";
+import api from '../config/api'
 
 
 interface formDataprops {
@@ -54,9 +55,9 @@ export default function Auth() {
 
     const Authuser = async ()=>{
         try{
-            const endpoint = activeTab==='signup'? 'http://localhost:3000/api/v1/user/register' : 'http://localhost:3000/api/v1/user/login'
+            const endpoint = activeTab==='signup'? 'api/v1/user/register' : 'api/v1/user/login'
             const formdata = activeTab==='signup' ? formData : loginFormData
-            const response = await axios.post(endpoint, formdata, {
+            const response = await api.post(endpoint, formdata, {
                 withCredentials: true,             
                 headers:{
                     'Content-Type':'application/json',
