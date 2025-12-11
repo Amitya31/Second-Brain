@@ -25,7 +25,7 @@ function Button({
     }
   return (
     <button
-      className={`${variants[variant]} ${className ?? ""} flex items-center justify-center ` } 
+      className={`${variants[variant]} ${className ?? ""} flex items-center justify-center cursor-pointer` } 
       {...rest}
     >
       {startIcon && <span>{startIcon}</span>}

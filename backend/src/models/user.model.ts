@@ -49,7 +49,7 @@ const UserSchema = new Schema<IUser>({
 // })
 
 UserSchema.methods.accessToken = function():string{
-    const accessToken = jwt.sign({userId:this._id},JWTSECRET as string,{expiresIn:'15m'})
+    const accessToken = jwt.sign({userId:this._id},JWTSECRET as string,{expiresIn:'1d'})
     return accessToken;
 }
 

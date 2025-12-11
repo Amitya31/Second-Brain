@@ -1,6 +1,6 @@
 "use client";
 
-import {  useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -10,14 +10,14 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose
-} from "./ui/Dialog"; // update this path if needed
-import  Button  from "./ui/Button";
+} from "./ui/Dialog";
+import Button from "./ui/Button";
 import { CopyIcon } from "@radix-ui/react-icons";
 import { CopyCheckIcon, Loader } from "lucide-react";
 import api from "../config/api";
+import toast from "react-hot-toast";
 
-
-type FormData = {
+type FormDataType = {
   url: string;
   title: string;
   contentType: string;
@@ -25,209 +25,242 @@ type FormData = {
 };
 
 const Navbar = () => {
-  const [modalOpen,setModalOpen] = useState<boolean>(false)
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [tagInput, setTagInput] = useState("");
-  const [link,setLink] = useState<string>('')
-  const [shareable,setShareable] = useState<boolean|null>()
-  const [loading,setLoading] = useState<boolean>(false)
-  const [formData, setFormData] = useState<FormData>({
+  const [link, setLink] = useState<string>("");
+  const [shareable, setShareable] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [formData, setFormData] = useState<FormDataType>({
     url: "",
     title: "",
     contentType: "",
     tags: []
   });
-  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
     if (name === "tags") {
-      setTagInput(value); // keep typing smooth
-      const tagsArray = value.split(/[ ,]+/).filter(Boolean); // split by space/comma
-      setFormData((prev) => ({ ...prev, tags: tagsArray }));
-      
+      setTagInput(value);
+      const tagsArray = value.split(/[ ,]+/).filter(Boolean);
+      setFormData(prev => ({ ...prev, tags: tagsArray }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  console.log("Submitted:", formData);
-  console.log(formData)
-  
-  // Handle submission logic here (API call, validation, etc.)
-  await uploadData();
+  useEffect(() => {
+    if (shareable === null) return;
 
-  setModalOpen(prev=>!prev)
-};
-
-const handleCopy = ()=>{
-  console.log('copied')
-
-}
-
-
-
-
-const shareContent = async ()=>{
-
-try {
-  const token = localStorage.getItem('token')
-  
-  const response = await api.post('/api/v1/share',{share:shareable},
-    {
-      headers:{
-        Authorization:`Bearer ${token}`
+    const shareContent = async () => {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      try {
+        const response = await api.post(
+          "/api/v1/share",
+          { share: shareable },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const returned = response.data.message;
+        if (shareable) {
+          setLink(typeof returned === "string" ? returned : returned?.link ?? JSON.stringify(returned));
+          toast.success("Sharing enabled");
+        } else {
+          setLink("");
+          toast.success("Sharing disabled");
+        }
+      } catch (err) {
+        console.error("Error in sharing content", err);
+        toast.error("Failed to toggle sharing");
+      } finally {
+        setLoading(false);
       }
+    };
+
+    shareContent();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shareable]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await uploadData();
+    setModalOpen(false);
+  };
+
+  const handleCopy = async () => {
+    try {
+      if (!link) {
+        toast("Nothing to copy");
+        return;
+      }
+      await navigator.clipboard.writeText(link);
+      toast.success("Link copied to clipboard");
+    } catch (err) {
+      console.error(err);
+      toast.error("Copy failed");
     }
-  )
-  if(shareable){
-    console.log(response.data)
-    setLink(response.data)
-  }else{
-    console.log("Sharing Stopped",response.data)
-  }
-  setLoading(false)
-} catch (err){
-  console.log('Error in sharing content',err)
-}
-}
-if(shareable!==null){
-  shareContent()
-}
- 
+  };
 
-const uploadData = async ()=>{
-  try{
-    const token = await localStorage.getItem('token')
-    const response = await api.post('/api/v1/content',formData,
+  const uploadData = async () => {
+    setLoading(true);
+    const token = localStorage.getItem("token");
+    try {
+      const response = await api.post(
+        "/api/v1/content",
+        formData,
         {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        withCredentials: true
-      }
-    );
-    const data = response.data;
-    console.log(data)
-    setLoading(false)
-  }catch(e){
-    if(e instanceof Error)
-    console.log(e.message)
-  }
-  
-}
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          withCredentials: true
+        }
+      );
+      toast.success("Content uploaded");
+      setFormData({ url: "", title: "", contentType: "", tags: [] });
+      setTagInput("");
+      return response.data;
+    } catch (e) {
+      console.error(e);
+      const msg = e instanceof Error ? e.message : "Upload failed";
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="lg:x-0 p-4 flex justify-between bg-neutral-300 ">
-      <h1 className=" text-xl lg:text-3xl font-bold bg-clip-text ml-12 bg-transparent bg-gradient-to-b from-neutral-300 to-neutral-400">Punk Records</h1>
-      <div className="flex gap-x-4 justify-end">
-        {shareable && <Button className="text-xl flex p-1 rounded-md" variant="secondary" onClick={()=>setShareable(false)}>Stop Sharing</Button>}
-      <Dialog >
-        <DialogTrigger asChild>
-          <Button disabled={shareable?true:false} className="text-sm lg:text-xl p-1 rounded-md" variant="secondary" onClick={()=>setShareable(true)}>Share Content</Button>
-        </DialogTrigger>
+    <div className="lg:px-6 p-4 flex justify-between items-center bg-neutral-800 text-white">
+      <div className="font-bold ml-4 flex items=center justify-between gap-x-2">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-600 to-violet-600 flex items-center justify-center shadow-lg">
+              <span className="font-bold">PR</span>
+             </div>
+      <div className="text-xl font-semibold pt-1">Punk Records</div>
+      </div>
 
-        <DialogContent className="bg-neutral-300 text-white ">
-          <DialogHeader>
-            <DialogClose>X</DialogClose>
-            <DialogTitle >Share your brain</DialogTitle>
-            <div className="flex"></div>
-            <div className="bg-zinc-600 text-xl text-gray-300 p-1 rounded-sm">
-              {loading?'...loading':link}
-            </div>
-            <button onClick={handleCopy}>
-              <CopyIcon/>
-              <CopyCheckIcon/>
-            </button>
-            <DialogDescription>
-              
-              Click on Share to share your contents
-            </DialogDescription>
-          </DialogHeader>
+      <div className="flex gap-x-4 items-center">
+        {shareable && (
+          <Button className="text-sm lg:text-xl p-1 rounded-md" variant="secondary" onClick={() => setShareable(false)}>
+            Stop Sharing
+          </Button>
+        )}
 
-        </DialogContent>
-      </Dialog >
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              disabled={Boolean(shareable)}
+              className="text-sm lg:text-xl p-1 rounded-md"
+              variant="secondary"
+              onClick={() => setShareable(true)}
+              type="button"
+            >
+              Share Content
+            </Button>
+          </DialogTrigger>
 
-      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogTrigger asChild>
-          <Button className="text-xl p-1 rounded-md" variant="primary">Add Content</Button>
-        </DialogTrigger>
+          <DialogContent className="bg-neutral-700 text-white">
+            <DialogHeader>
+              <DialogClose>X</DialogClose>
+              <DialogTitle>Share your brain</DialogTitle>
 
-        <DialogContent className="bg-neutral-200 ">
-          <DialogHeader className=" text-black">
-            <DialogTitle className=" text-4xl">Add New Content</DialogTitle>
-            <DialogDescription className="ml-23">
-              Fill in the details to add your content.
-            </DialogDescription>
-          </DialogHeader>
+              <div className="mt-3 mb-3 bg-zinc-600 text-sm text-gray-300 p-2 rounded-sm">
+                {loading ? "…loading" : (link || "No share link yet")}
+              </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4 mt-4 text-black flex flex-col gap-y-2 ml-25 ">
-            <div className="flex gap-x-4 w-20">
-              <label htmlFor="url" className="mt-1 text-xl">URL</label>
-              <input
-                id="url"
-                name="url"
-                value={formData.url}
-                onChange={handleChange}
-                placeholder="https://example.com"
-                className="text-xl outline-0 focus:outline-1 outline-neutral-300"
-                required
-              />
-            </div>
+              <div className="flex gap-2 items-center">
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  aria-label="Copy share link"
+                  className="rounded p-1 hover:bg-gray-600"
+                >
+                  <CopyIcon />
+                </button>
+                <CopyCheckIcon className="h-5 w-5 text-green-400" />
+              </div>
 
-            <div className="flex gap-x-4">
-              <label htmlFor="title" className="mt-1 text-xl">Title</label>
-              <input
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                placeholder="Awesome Resource"
-                className="text-xl outline-0 focus:outline-1 outline-neutral-300"
-                required
-              />
-            </div>
+              <DialogDescription>Click on Share to share your contents</DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
 
-            <div className="flex gap-x-4">
-              <label htmlFor="type" className="mt-1 text-xl" >Type</label>
-              <input
-                id="type"
-                name="contentType"
-                value={formData.contentType}
-                onChange={handleChange}
-                placeholder="Video, Blog, Tool, etc."
+        <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+          <DialogTrigger asChild>
+            <Button className="text-xl p-1 rounded-md" variant="primary" type="button">
+              Add Content
+            </Button>
+          </DialogTrigger>
 
-                required
-              />
-            </div>
+          <DialogContent className="bg-neutral-200 text-black">
+            <DialogHeader>
+              <DialogTitle className="text-3xl">Add New Content</DialogTitle>
+              <DialogDescription>Fill in the details to add your content.</DialogDescription>
+            </DialogHeader>
 
-            <div className="flex gap-x-4">
-              <label htmlFor="tags" className="mt-1 text-xl">Tags</label>
-              <input
-                id="tags"
-                name="tags"
-                value={tagInput}
-                onChange={handleChange}
-                className="text-xl outline-0 focus:outline-1 outline-neutral-300"
-                placeholder="eg:#react,#ui"
-              />
-            </div>
+            <form onSubmit={handleSubmit} className="space-y-4 mt-4 text-black">
+              <div className="flex flex-col gap-1">
+                <label htmlFor="url" className="font-medium">URL</label>
+                <input
+                  id="url"
+                  name="url"
+                  value={formData.url}
+                  onChange={handleChange}
+                  placeholder="https://example.com"
+                  className="p-2 border rounded outline-none"
+                  required
+                />
+              </div>
 
-            <DialogFooter className="pt-4 mr-35">
-                <Button className="text-xl px-3 py-1 rounded-sm border-1 " type="button" variant="danger" onClick={() => setModalOpen(false)}>
+              <div className="flex flex-col gap-1">
+                <label htmlFor="title" className="font-medium">Title</label>
+                <input
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  placeholder="Awesome Resource"
+                  className="p-2 border rounded outline-none"
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label htmlFor="type" className="font-medium">Type</label>
+                <input
+                  id="type"
+                  name="contentType"
+                  value={formData.contentType}
+                  onChange={handleChange}
+                  placeholder="Video, Blog, Tool, etc."
+                  className="p-2 border rounded outline-none"
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label htmlFor="tags" className="font-medium">Tags</label>
+                <input
+                  id="tags"
+                  name="tags"
+                  value={tagInput}
+                  onChange={handleChange}
+                  className="p-2 border rounded outline-none"
+                  placeholder="eg: react ui"
+                />
+                <p className="text-sm text-gray-600">Separate tags by space or comma</p>
+              </div>
+
+              <DialogFooter className="flex gap-3 justify-end pt-4">
+                <Button type="button" variant="danger" className="p-2 rounded-md cursor-pointer" onClick={() => setModalOpen(false)}>
                   Cancel
                 </Button>
-
-              <Button className="text-xl px-3 py-1 rounded-sm " disabled={loading} type="submit" variant="secondary">
-                {loading ? <Loader className="animate-spin" /> : 'Submit'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog></div>
+                <Button type="submit" variant="secondary" className="p-2 rounded-md cursor-pointer" disabled={loading}>
+                  {loading ? <Loader className="animate-spin" /> : "Submit"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 };

@@ -28,7 +28,7 @@ export const ShareLink = async (req:Request,res:Response)=>{
             UserId:userId,
         })
         res.status(200).json({
-            message:"/share/" + hash,
+            message:hash,
             success:true,
         })
     } else {
@@ -72,8 +72,7 @@ export const ShareContent = async (req:Request,res:Response)=>{
             user:UserContent.UserId
         })
 
-  
-
+ 
         return res.status(200).json({
             content: Contentdata,
             success:true

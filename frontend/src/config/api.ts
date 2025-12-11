@@ -8,7 +8,6 @@ const api = axios.create({
   withCredentials: true, // send refresh token cookies automatically
 });
 
-// Request interceptor → attach access token
 
 api.interceptors.request.use(
   (config) => {

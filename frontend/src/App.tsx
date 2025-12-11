@@ -6,17 +6,23 @@ import { ProtectedRoute } from "./Components/ProtectedRoute"
 import ModalProvider from "./Context/ModalContext"
 import { ContentTypeProvider } from "./Context/ContentTypeContext"
 import Applayout from "./Components/Applayout"
-import SharedContent from "./Components/SharedContent"
+import SharedContent from "./Pages/SharedContent"
+import { Toaster } from "react-hot-toast"
+import LandingPage from "./Pages/Landing"
 
 
 function App() {
 
   return (
+    <>
+    <Toaster position="top-right" />
+
     <Routes>
-      <Route path={'/auth'} element={<Auth />}/>
+      <Route path={"/auth"} element={<Auth />}/>
+      <Route path={"/"} element={<LandingPage/>}/>
 
       <Route
-        path="/"
+        path="/Home"
         element={
           <ProtectedRoute>
             <ModalProvider>
@@ -34,13 +40,14 @@ function App() {
         path="/content/:sharedContent"
         element={
           <ContentTypeProvider>
-                <Applayout>
-                  <SharedContent />
-                </Applayout>
-              </ContentTypeProvider>
+            <ProtectedRoute>
+                <SharedContent />
+            </ProtectedRoute>
+          </ContentTypeProvider>
         }
       />
     </Routes>
+    </>
   )
 }
 
